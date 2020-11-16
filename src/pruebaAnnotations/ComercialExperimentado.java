@@ -1,14 +1,15 @@
 package pruebaAnnotations;
 
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 //@Component("ComercialExperimentado")
+//@Scope("prototype") // con esto creamos varias instancias
 @Component
-@Scope("prototype") // con esto creamos varias instancias
-public class ComercialExperimentado implements Empleados{
+public class ComercialExperimentado implements Empleados, InitializingBean, DisposableBean{
 	
 	@Autowired
 	@Qualifier("informeFinancieroTrim2")
@@ -35,14 +36,22 @@ public class ComercialExperimentado implements Empleados{
 	}
 	
 //	Ejecución de código después de la creación del BEAN
-	@PostConstruct
 	public void ejecutaDespuesCreacion() {
 		System.out.println("Ejecutado tras la creación del BEAN");
 	}
 	
 //	Ejecución de código despúes de apagado contenedor SPRING
-	@PreDestroy
 	public void ejecutaAntesDestruccion() {
 		System.out.println("Ejecutando antes de la destrucción");
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		ejecutaAntesDestruccion();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		ejecutaDespuesCreacion();
 	}
 }
